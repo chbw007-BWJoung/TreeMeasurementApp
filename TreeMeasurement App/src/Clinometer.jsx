@@ -35,6 +35,8 @@ const avgAngle = (arr) => {
   return d;
 };
 const angleDiff = (a, b) => ((b - a + 540) % 360) - 180; // -180~180
+// 소수점 첫째 자리 반올림 (부동소수 오차 보정: 1.05 → 1.1)
+const round1 = (v) => Math.round((v + Math.sign(v) * Number.EPSILON) * 10) / 10;
 const fmt = (v, d = 1) => (v === null || v === undefined || Number.isNaN(v) ? '–' : v.toFixed(d));
 
 const STEPS = [
@@ -181,9 +183,9 @@ export default function Clinometer({ onApply }) {
     if (!hasD) return setNote('먼저 나무까지의 수평거리를 입력하세요.');
     if (height === null || height <= 0) return setNote('밑동과 꼭대기를 먼저 측정하세요.');
     onApply({
-      height: height.toFixed(2),
-      clearLength: clear !== null && clear >= 0 && clear <= height ? clear.toFixed(2) : '',
-      crownWidth: crown !== null ? crown.toFixed(2) : '',
+      height: round1(height).toFixed(1),
+      clearLength: clear !== null && clear >= 0 && clear <= height ? round1(clear).toFixed(1) : '',
+      crownWidth: crown !== null ? round1(crown).toFixed(1) : '',
       azimuth: azimuth !== null ? String(Math.round(azimuth) % 360) : '',
     });
     setNote('✅ 아래 입력란에 적용했습니다. 흉고직경을 입력하고 저장하세요.');
@@ -250,9 +252,9 @@ export default function Clinometer({ onApply }) {
           </div>
 
           <div style={{ marginTop: '12px', background: '#111', padding: '10px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '15px', lineHeight: 1.7 }}>
-            수고   : {height !== null ? fmt(height, 2) + ' m' : '–'}<br />
-            지하고 : {clear !== null ? fmt(clear, 2) + ' m' : '–'}<br />
-            수관폭 : {crown !== null ? fmt(crown, 2) + ' m (추정)' : '–'}<br />
+            수고   : {height !== null ? fmt(round1(height), 1) + ' m' : '–'}<br />
+            지하고 : {clear !== null ? fmt(round1(clear), 1) + ' m' : '–'}<br />
+            수관폭 : {crown !== null ? fmt(round1(crown), 1) + ' m (추정)' : '–'}<br />
             방위각 : {azimuth !== null ? fmt(azimuth, 0) + '°' : '–'}
           </div>
           {!hasD && Object.keys(rec).length > 0 && (

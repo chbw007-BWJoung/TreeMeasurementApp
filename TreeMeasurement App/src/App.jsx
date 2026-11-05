@@ -9,6 +9,9 @@ const toNumberOrNull = (value) => {
   return Number.isFinite(n) ? n : null;
 };
 
+// 측정값은 소수점 첫째 자리(X.X)로 반올림해 저장합니다. (부동소수 오차 보정: 1.05 → 1.1)
+const round1 = (n) => (n === null ? null : Math.round((n + Math.sign(n) * Number.EPSILON) * 10) / 10);
+
 const inputStyle = { width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box', fontSize: '16px' };
 
 export default function App() {
@@ -41,10 +44,10 @@ export default function App() {
     setMessage('');
 
     const record = {
-      height: toNumberOrNull(height),
-      clear_length: toNumberOrNull(clearLength),
-      dbh: toNumberOrNull(dbh), // 흉고직경 (cm)
-      crown_width: toNumberOrNull(crownWidth),
+      height: round1(toNumberOrNull(height)),
+      clear_length: round1(toNumberOrNull(clearLength)),
+      dbh: round1(toNumberOrNull(dbh)), // 흉고직경 (cm)
+      crown_width: round1(toNumberOrNull(crownWidth)),
       azimuth: azimuth === '' ? null : Math.round(Number(azimuth)) % 360,
     };
 
