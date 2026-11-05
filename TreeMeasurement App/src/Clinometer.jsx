@@ -231,7 +231,7 @@ export default function Clinometer({ onApply }) {
 
           <label style={{ display: 'block', marginTop: '12px' }}>
             나무까지 수평거리 D (m):
-            <input type="number" inputMode="decimal" step="0.1" min="0" value={distance}
+            <input type="number" inputMode="decimal" step="any" min="0" value={distance}
               onChange={(e) => setDistance(e.target.value)} placeholder="예: 15"
               style={{ width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box', fontSize: '16px' }} />
           </label>
