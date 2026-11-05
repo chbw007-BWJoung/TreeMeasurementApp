@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from './supabaseClient';
+import { supabase, configError } from './supabaseClient';
 
 // 빈 칸은 0이 아니라 null(미측정)로 저장합니다. 0으로 저장하면 "지하고 0m"와 구분할 수 없습니다.
 const toNumberOrNull = (value) => {
@@ -45,6 +45,8 @@ export default function App() {
     if (record.azimuth !== null && (Number.isNaN(record.azimuth) || record.azimuth < 0))
       return showError('방위각은 0~359° 사이로 입력하세요.');
 
+    if (!supabase) return showError(configError || 'Supabase 설정이 없습니다.');
+
     setLoading(true);
     try {
       const { error } = await supabase.from('tree_measurements').insert([record]);
@@ -68,6 +70,11 @@ export default function App() {
   return (
     <div style={{ padding: '20px', maxWidth: '400px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <h2>🌲 수목 측정 기록 앱</h2>
+      {configError && (
+        <div style={{ background: '#7f1d1d', color: '#fff', padding: '10px', borderRadius: '6px', marginBottom: '15px', fontSize: '14px', wordBreak: 'break-all' }}>
+          ⚠️ {configError}
+        </div>
+      )}
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <div>
           <label>수고 (m):</label>
