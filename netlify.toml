@@ -1,0 +1,8 @@
+# Netlify 빌드 설정 (저장소 최상위에 두세요)
+[build]
+  base    = "TreeMeasurement App"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
