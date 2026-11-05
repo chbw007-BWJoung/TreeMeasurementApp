@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase, configError } from './supabaseClient';
+import Clinometer from './Clinometer.jsx';
 
 // 빈 칸은 0이 아니라 null(미측정)로 저장합니다. 0으로 저장하면 "지하고 0m"와 구분할 수 없습니다.
 const toNumberOrNull = (value) => {
@@ -19,6 +20,15 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
+
+  // 센서 측정 결과를 입력란에 채움 (빈 값은 기존 입력 유지)
+  const applyMeasurement = (m) => {
+    setHeight(m.height);
+    if (m.clearLength !== '') setClearLength(m.clearLength);
+    if (m.crownWidth !== '') setCrownWidth(m.crownWidth);
+    if (m.azimuth !== '') setAzimuth(m.azimuth);
+    setMessage('');
+  };
 
   const showError = (text) => {
     setIsError(true);
@@ -75,6 +85,7 @@ export default function App() {
           ⚠️ {configError}
         </div>
       )}
+      <Clinometer onApply={applyMeasurement} />
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         <div>
           <label>수고 (m):</label>
