@@ -2,8 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 // ▼▼▼ 여기 두 줄만 바꾸면 됩니다 (따옴표 안에, 줄바꿈 없이 한 줄로) ▼▼▼
 const DEFAULT_URL = 'https://ljhrhnbdqekitetzjrck.supabase.co'
-const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqaHJobmJkcWVraXRldHpqcmNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4NjMyNzIsImV4cCI6MjEwOTQzOTI3Mn0.WyHD7ng1ciGB-xTayNUGFryCRg2bRPjMLSxiUuughYg
-'
+const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqaHJobmJkcWVraXRldHpqcmNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4NjMyNzIsImV4cCI6MjEwOTQzOTI3Mn0.WyHD7ng1ciGB-xTayNUGFryCRg2bRPjMLSxiUuughYg'
 // ▲▲▲
 
 // Netlify 환경 변수(VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)가 있으면 그 값을 우선 사용합니다.
