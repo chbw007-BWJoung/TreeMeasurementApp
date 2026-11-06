@@ -40,6 +40,9 @@ const todayRange = () => {
   return [s.toISOString(), e.toISOString()];
 };
 
+// 수목진단 앱의 기초현황조사표 페이지 (?import=1 이면 가져오기 창이 바로 열림)
+const SURVEY_URL = 'https://cheery-youtiao-dca659.netlify.app/survey/index.html?import=1';
+
 const COLUMN_HINT =
   ' → Supabase SQL Editor에서 supabase_schema.sql을 실행해 tree_no·species 칸을 추가하세요.';
 
@@ -205,6 +208,10 @@ export default function App() {
         </button>
       </form>
       {message && <p style={{ marginTop: '15px', color: isError ? '#f87171' : '#4ade80' }}>{message}</p>}
+      <a href={SURVEY_URL} target="_blank" rel="noopener"
+        style={{ display: 'block', marginTop: '20px', padding: '12px', textAlign: 'center', background: '#173f5f', color: '#fff', borderRadius: '5px', fontWeight: 'bold', textDecoration: 'none' }}>
+        📋 기초조사표 열기 (측정값 가져오기)
+      </a>
     </div>
   );
 }
