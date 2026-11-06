@@ -355,10 +355,10 @@ struct ARMeasurementView: View {
 
                 // 결과
                 VStack(alignment: .leading, spacing: 4) {
-                    resultRow("수고", model.data.height > 0 ? String(format: "%.2f m", model.data.height) : nil)
-                    resultRow("지하고", model.data.clearLength.map { String(format: "%.2f m", $0) })
+                    resultRow("수고", model.data.height > 0 ? String(format: "%.1f m", model.data.height) : nil)
+                    resultRow("지하고", model.data.clearLength.map { String(format: "%.1f m", $0) })
                     resultRow("흉고직경", model.data.dbh.map { String(format: "%.1f cm", $0) })
-                    resultRow("수관폭", model.data.crownWidth.map { String(format: "%.2f m", $0) })
+                    resultRow("수관폭", model.data.crownWidth.map { String(format: "%.1f m", $0) })
                     resultRow("방위각", model.step == .base ? nil : String(format: "%.0f°", model.data.azimuth))
                 }
                 .font(.system(.body, design: .monospaced))

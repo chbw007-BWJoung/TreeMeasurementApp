@@ -28,13 +28,14 @@ struct TreeMeasurementRecord: Encodable {
     let azimuth: Int                  // DB 컬럼이 integer 이므로 정수로 보냄
 
     init(_ m: TreeMeasurementData) {
-        func r2(_ v: Double) -> Double { (v * 100).rounded() / 100 }
-        height = r2(m.height)
-        heightAngle = r2(m.heightAngle)
-        clearLength = m.clearLength.map(r2)
-        branchAngle = m.branchAngle.map(r2)
-        dbh = m.dbh.map { ($0 * 10).rounded() / 10 }
-        crownWidth = m.crownWidth.map(r2)
+        // 측정값은 소수점 첫째 자리(X.X)로 반올림
+        func r1(_ v: Double) -> Double { (v * 10).rounded(.toNearestOrAwayFromZero) / 10 }
+        height = r1(m.height)
+        heightAngle = r1(m.heightAngle)
+        clearLength = m.clearLength.map(r1)
+        branchAngle = m.branchAngle.map(r1)
+        dbh = m.dbh.map(r1)
+        crownWidth = m.crownWidth.map(r1)
         azimuth = Int(m.azimuth.rounded()) % 360
     }
 }

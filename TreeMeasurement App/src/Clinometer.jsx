@@ -6,6 +6,8 @@ import React, { useEffect, useRef, useState } from 'react';
 //  지하고 = D × (tan θ가지 − tan θ밑동)
 //  수관폭 ≈ 2 × D × tan(Δ방위/2)   (수관 좌우 끝을 겨눈 수평 각도 차)
 //  D = 나무까지의 수평거리(m)
+//  흉고직경 = 2r,  r = d × sin(Δ/2) / (1 − sin(Δ/2))
+//           d = 줄기 표면까지 거리, Δ = 줄기 좌우 끝(1.2 m 높이)을 겨눈 수평 각도 차
 // ─────────────────────────────────────────────────────────────
 
 const DEG = Math.PI / 180;
@@ -47,6 +49,11 @@ const STEPS = [
   { key: 'crownR', label: '⑤ 수관 오른쪽 끝', kind: 'head' },
 ];
 
+const DBH_STEPS = [
+  { key: 'dbhL', label: '줄기 왼쪽 끝', kind: 'head' },
+  { key: 'dbhR', label: '줄기 오른쪽 끝', kind: 'head' },
+];
+
 const btn = (bg) => ({
   padding: '12px 8px', background: bg, color: '#fff', border: 'none',
   borderRadius: '6px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer',
@@ -65,6 +72,8 @@ export default function Clinometer({ onApply }) {
   const [distance, setDistance] = useState('');
   const [rec, setRec] = useState({});
   const [note, setNote] = useState('');
+  const [mode, setMode] = useState('tree'); // 'tree' = 수고·수관폭, 'dbh' = 흉고직경
+  const [dbhDist, setDbhDist] = useState('');
 
   // ── 센서 이벤트 ─────────────────────────────
   useEffect(() => {
@@ -175,6 +184,16 @@ export default function Clinometer({ onApply }) {
   const crown = hasD && dPsi !== null && dPsi < 170 ? 2 * D * tan(dPsi / 2) : null;
   const azimuth = rec.base?.compass ?? null;
 
+  // 흉고직경 (원기둥 줄기의 좌우 접선 각도로 계산)
+  const dd = parseFloat(dbhDist);
+  const hasDd = Number.isFinite(dd) && dd > 0;
+  const dbhDelta = rec.dbhL && rec.dbhR ? Math.abs(angleDiff(rec.dbhL.head, rec.dbhR.head)) : null;
+  let dbh = null;
+  if (hasDd && dbhDelta !== null && dbhDelta > 0.1 && dbhDelta < 120) {
+    const sh = Math.sin((dbhDelta / 2) * DEG);
+    dbh = (2 * dd * sh / (1 - sh)) * 100; // cm
+  }
+
   let warn = '';
   if (height !== null && height <= 0) warn = '꼭대기 각도가 밑동보다 낮습니다. 다시 측정하세요.';
   else if (clear !== null && height !== null && (clear < 0 || clear > height)) warn = '지하고가 0~수고 범위를 벗어났습니다.';
@@ -188,10 +207,31 @@ export default function Clinometer({ onApply }) {
       crownWidth: crown !== null ? round1(crown).toFixed(1) : '',
       azimuth: azimuth !== null ? String(Math.round(azimuth) % 360) : '',
     });
-    setNote('✅ 아래 입력란에 적용했습니다. 흉고직경을 입력하고 저장하세요.');
+    setNote('✅ 아래 입력란에 적용했습니다. 흉고직경 탭에서 흉고직경도 잴 수 있습니다.');
   };
 
-  const reset = () => { setRec({}); setNote(''); };
+  const applyDbh = () => {
+    if (!hasDd) return setNote('줄기 표면까지의 거리를 입력하세요.');
+    if (dbh === null) return setNote('줄기 왼쪽·오른쪽 끝을 모두 겨눠 주세요.');
+    onApply({ dbh: round1(dbh).toFixed(1) });
+    setNote('✅ 흉고직경을 아래 입력란에 적용했습니다.');
+  };
+
+  const reset = () => {
+    setNote('');
+    setRec((r) => {
+      const keys = mode === 'dbh' ? ['dbhL', 'dbhR'] : STEPS.map((x) => x.key);
+      const n = { ...r };
+      keys.forEach((k) => delete n[k]);
+      return n;
+    });
+  };
+
+  const tabBtn = (m, label) => (
+    <button type="button" onClick={() => { setMode(m); setNote(''); }}
+      style={{ ...btn(mode === m ? '#2563eb' : '#374151'), flex: 1, padding: '10px 4px' }}>{label}</button>
+  );
+  const inputSt = { width: '100%', padding: '8px', marginTop: '5px', boxSizing: 'border-box', fontSize: '16px' };
 
   // ── 화면 ─────────────────────────────
   return (
@@ -204,7 +244,8 @@ export default function Clinometer({ onApply }) {
             <li>나무에서 10~20 m 떨어져 <b>수평거리</b>를 줄자·걸음으로 잽니다.</li>
             <li>폰을 세워 십자선을 <b>밑동 → 꼭대기 → 가지 시작점</b>에 맞추고 버튼을 누릅니다.</li>
             <li>(선택) 수관 왼쪽·오른쪽 끝을 겨눠 수관폭을 잽니다.</li>
-            <li><b>입력란에 적용</b> → 흉고직경 입력 → 저장</li>
+            <li><b>흉고직경</b> 탭: 줄기에서 2~3 m 떨어져 1.2 m 높이의 줄기 좌우 끝을 겨눕니다.</li>
+            <li><b>입력란에 적용</b> → 저장</li>
           </ol>
           <button type="button" onClick={start} style={{ ...btn('#2563eb'), width: '100%' }}>
             센서·카메라 시작
@@ -229,6 +270,12 @@ export default function Clinometer({ onApply }) {
           {camError && <p style={{ color: '#fbbf24', fontSize: '13px' }}>{camError}</p>}
           {sensorError && <p style={{ color: '#f87171', fontSize: '13px' }}>{sensorError}</p>}
 
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            {tabBtn('tree', '수고·지하고·수관폭')}
+            {tabBtn('dbh', '흉고직경')}
+          </div>
+
+          {mode === 'tree' ? (<>
           <label style={{ display: 'block', marginTop: '12px' }}>
             나무까지 수평거리 D (m):
             <input type="number" inputMode="decimal" step="any" min="0" value={distance}
@@ -266,6 +313,34 @@ export default function Clinometer({ onApply }) {
             <button type="button" onClick={reset} style={{ ...btn('#4b5563'), flex: 1 }}>다시 측정</button>
             <button type="button" onClick={apply} style={{ ...btn('#2563eb'), flex: 2 }}>입력란에 적용 ↓</button>
           </div>
+          </>) : (<>
+          <p style={{ fontSize: '13px', color: '#d1d5db', margin: '12px 0 0', lineHeight: 1.6 }}>
+            줄기에서 2~3 m 떨어져 <b>지상 1.2 m 높이</b>에서, 세로 십자선을 줄기 <b>왼쪽 끝 → 오른쪽 끝</b>에 맞추고 버튼을 누르세요.
+            몸은 그 자리에 두고 폰만 좌우로 돌리세요.
+          </p>
+          <label style={{ display: 'block', marginTop: '12px' }}>
+            줄기 표면까지 거리 d (m):
+            <input type="number" inputMode="decimal" step="any" min="0" value={dbhDist}
+              onChange={(e) => setDbhDist(e.target.value)} placeholder="예: 2" style={inputSt} />
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '12px' }}>
+            {DBH_STEPS.map((s) => (
+              <button key={s.key} type="button" onClick={() => record(s)} style={btn(rec[s.key] ? '#065f46' : '#374151')}>
+                {s.label}
+                <div style={{ fontSize: '12px', fontWeight: 'normal', marginTop: '2px' }}>{rec[s.key] ? '✓ 방향 기록' : '겨누고 누르기'}</div>
+              </button>
+            ))}
+          </div>
+          <div style={{ marginTop: '12px', background: '#111', padding: '10px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '15px', lineHeight: 1.7 }}>
+            좌우 각도차 : {dbhDelta !== null ? fmt(dbhDelta, 1) + '°' : '–'}<br />
+            흉고직경   : {dbh !== null ? fmt(round1(dbh), 1) + ' cm' : '–'}
+          </div>
+          {!hasDd && (rec.dbhL || rec.dbhR) && <p style={{ color: '#fbbf24', fontSize: '13px' }}>거리 d를 입력해야 계산됩니다.</p>}
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            <button type="button" onClick={reset} style={{ ...btn('#4b5563'), flex: 1 }}>다시 측정</button>
+            <button type="button" onClick={applyDbh} style={{ ...btn('#2563eb'), flex: 2 }}>흉고직경 적용 ↓</button>
+          </div>
+          </>)}
           {note && <p style={{ fontSize: '14px', color: note.startsWith('✅') ? '#4ade80' : '#fbbf24' }}>{note}</p>}
         </>
       )}
