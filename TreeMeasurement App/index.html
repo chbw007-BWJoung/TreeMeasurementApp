@@ -6,13 +6,13 @@
     <title>TreeMeasurement App</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 
     <!-- Apple Touch Icon (iOS) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
 
     <!-- 안드로이드 홈 화면 추가용 -->
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="manifest" href="/manifest.webmanifest">
     <meta name="theme-color" content="#111111">
     <meta name="mobile-web-app-capable" content="yes">
 
@@ -20,7 +20,7 @@
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
-          navigator.serviceWorker.register("sw.js");
+          navigator.serviceWorker.register("/sw.js");
         });
       }
     </script>
