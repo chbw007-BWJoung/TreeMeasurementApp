@@ -1,14 +1,29 @@
 {
-  "name": "수목 축정 앱",
-  "short_name": "수고_수관폭",
-  "start_url": "/",
-  "scope": "/",
+  "name": "TreeMeasurement App",
+  "short_name": "TreeMeasure",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#eef1ee",
-  "theme_color": "#eef1ee",
+  "background_color": "#111111",
+  "theme_color": "#111111",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
