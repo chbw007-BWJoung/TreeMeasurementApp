@@ -1,6 +1,6 @@
 {
-  "name": "포항시 산악회 좌석 예약",
-  "short_name": "산악회 예약",
+  "name": "수목 축정 앱",
+  "short_name": "수고_수관폭",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
