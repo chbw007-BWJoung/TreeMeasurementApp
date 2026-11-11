@@ -11,8 +11,19 @@
     <!-- Apple Touch Icon (iOS) -->
     <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 
-<!-- 안드로이드 홈 화면 추가용 (아래 manifest 파일 필요) -->
-<link rel="manifest" href="manifest.webmanifest">
+    <!-- 안드로이드 홈 화면 추가용 -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#111111">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- 서비스워커 등록 -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js");
+        });
+      }
+    </script>
 </head>
   <body style="margin: 0; background-color: #111; color: white;">
     <div id="root">
