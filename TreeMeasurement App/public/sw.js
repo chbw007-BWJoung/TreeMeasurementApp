@@ -1,11 +1,5 @@
-const CACHE = "treemeasure-v1";
-const FILES = [
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
-];
+const CACHE = "treemeasure-v2";
+const FILES = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));
@@ -22,7 +16,6 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
-  );
+  if (e.request.method !== "GET") return;   // Supabase POST 등은 건드리지 않음
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
